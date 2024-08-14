@@ -218,6 +218,8 @@ preflight
 readthedocs
 req
 responseTimeout
+startupTimeout
+timeframe
 scalability
 storepass
 storetype
@@ -1128,6 +1130,7 @@ interdependencies
 maxSequenceJobQueueSize
 sequenceId
 sequenceMaxIdleMSec
+sequenceTimeoutMSec
 stateful
 tgz
 bitsandbytes
@@ -1293,3 +1296,4 @@ StableDiffusionXL
 photorealistic
 miniconda
 torchaudio
+ln

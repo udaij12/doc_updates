@@ -21,6 +21,8 @@ public class ModelConfig {
     private int maxBatchDelay;
     /** the timeout in sec of a specific model's response. */
     private int responseTimeout = 120; // unit: sec
+    /** the timeout in sec of a specific model's startup. */
+    private int startupTimeout = 120; // unit: sec
     /**
      * the device type where the model is loaded. It can be gpu, cpu. The model is loaded on CPU if
      * deviceType: "cpu" is set on a GPU host.
@@ -59,6 +61,10 @@ public class ModelConfig {
      * default value is 0.
      */
     private long sequenceMaxIdleMSec;
+    /**
+     * the timeout of a sequence inference request of this stateful model. The default value is 0.
+     */
+    private long sequenceTimeoutMSec;
     /**
      * the job queue size of one inference sequence of this stateful model. The default value is 1.
      */
@@ -116,6 +122,13 @@ public class ModelConfig {
                                 modelConfig.setResponseTimeout((int) v);
                             } else {
                                 logger.warn("Invalid responseTimeout: {}, should be integer", v);
+                            }
+                            break;
+                        case "startupTimeout":
+                            if (v instanceof Integer) {
+                                modelConfig.setStartupTimeout((int) v);
+                            } else {
+                                logger.warn("Invalid startupTimeout: {}, should be integer", v);
                             }
                             break;
                         case "deviceType":
@@ -194,6 +207,15 @@ public class ModelConfig {
                             } else {
                                 logger.warn(
                                         "Invalid sequenceMaxIdleMSec: {}, should be positive int",
+                                        v);
+                            }
+                            break;
+                        case "sequenceTimeoutMSec":
+                            if (v instanceof Integer) {
+                                modelConfig.setSequenceTimeoutMSec(((Integer) v).longValue());
+                            } else {
+                                logger.warn(
+                                        "Invalid sequenceTimeoutMSec: {}, should be positive int",
                                         v);
                             }
                             break;
@@ -306,6 +328,18 @@ public class ModelConfig {
         this.responseTimeout = responseTimeout;
     }
 
+    public int getStartupTimeout() {
+        return startupTimeout;
+    }
+
+    public void setStartupTimeout(int startupTimeout) {
+        if (startupTimeout <= 0) {
+            logger.warn("Invalid startupTimeout:{}", startupTimeout);
+            return;
+        }
+        this.startupTimeout = startupTimeout;
+    }
+
     public List<Integer> getDeviceIds() {
         return deviceIds;
     }
@@ -393,6 +427,14 @@ public class ModelConfig {
 
     public void setSequenceMaxIdleMSec(long sequenceMaxIdleMSec) {
         this.sequenceMaxIdleMSec = Math.max(0, sequenceMaxIdleMSec);
+    }
+
+    public long getSequenceTimeoutMSec() {
+        return sequenceTimeoutMSec;
+    }
+
+    public void setSequenceTimeoutMSec(long sequenceTimeoutMSec) {
+        this.sequenceTimeoutMSec = Math.max(0, sequenceTimeoutMSec);
     }
 
     public int getMaxSequenceJobQueueSize() {
